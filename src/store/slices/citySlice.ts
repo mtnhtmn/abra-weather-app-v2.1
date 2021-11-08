@@ -1,14 +1,16 @@
-import {createSlice, PayloadAction} from "@reduxjs/toolkit";
+import {createSlice} from "@reduxjs/toolkit";
 import axios from "axios";
 
 export interface CityState {
     cityData: any
     city: any
+    cityForecast: []
 }
 
 const initialState: CityState = {
     cityData: null,
-    city: null
+    city: null,
+    cityForecast: []
 }
 
 export const citySlice = createSlice({
@@ -20,11 +22,14 @@ export const citySlice = createSlice({
         },
         getCity: (state,action) => {
             state.city = action.payload
+        },
+        getForecast: (state, action) => {
+            state.cityForecast = action.payload
         }
     }
 })
 
-export const {getCityData, getCity} = citySlice.actions
+export const {getCityData, getCity, getForecast} = citySlice.actions
 
 
 export const getCityAction = () => (dispatch:any) => {
@@ -44,6 +49,17 @@ export const getCityDataAction = () => (dispatch:any) => {
         console.log(error)
     })
 }
+
+export const getCityForecastAction = () => (dispatch: any) => {
+    axios.get('http://dataservice.accuweather.com/forecasts/v1/daily/5day/215854?apikey=xevDxA5DrqpWPmxG3UWazN5As6P6poAw')
+        .then((response:any) => {
+            dispatch(getForecast(response.data.DailyForecasts))
+        }).catch((error) => {
+        console.log(error)
+    })
+}
+
+
 
 export default citySlice.reducer
 
